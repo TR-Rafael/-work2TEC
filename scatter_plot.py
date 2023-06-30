@@ -20,8 +20,8 @@ def draw_scatter_plot(data: pd.DataFrame):
     plt.plot(np.unique(result['total_x']),
              np.poly1d(np.polyfit(result['total_x'], result['total_y'], 1))(
                  np.unique(result['total_x'])), color='red')
-    plt.xlabel('Mortes em 2019')
-    plt.ylabel('Mortes em 2020')
+    plt.xlabel('Mortes em 2020')
+    plt.ylabel('Mortes em 2019')
 
     ax = sns.scatterplot(x='total_x', y='total_y', data=result, color='blue')
     texts = []
