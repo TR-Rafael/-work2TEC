@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from scatter_plot import draw_scatter_plot
 from box_plot import draw_box_plot
+from line_plot import draw_line_plot
 
 def read_csv(pathName):
     payload = []
@@ -82,12 +83,13 @@ if __name__ == "__main__":
     plt.rcParams['figure.figsize'] = (11, 7)
     path_of_database = 'dataBase/death_cause_brazil.csv'
     data = pd.read_csv(path_of_database)
-    data = treat_data(data)
+    # data = treat_data(data)
 
-    draw_box_plot(data)
-    draw_scatter_plot(data)
-    death_distribution_chart_generator_according_to_states(data)
-    amount_of_death_by_age_graph_generator(data)
+    # draw_box_plot(data)
+    # draw_scatter_plot(data)
+    # death_distribution_chart_generator_according_to_states(data)
+    # amount_of_death_by_age_graph_generator(data)
+    draw_line_plot(data)
     #  Esse abaixo estata funcionando
     # age_columns = list(map(lambda x: x['age'], data))
     # amount_of_death_by_age_graph_generator(age_columns)
