@@ -3,7 +3,9 @@ import csv
 import re
 import random
 import numpy as np
-
+import pandas as pd
+from scatter_plot import draw_scatter_plot
+from box_plot import draw_box_plot
 
 def read_csv(pathName):
     payload = []
@@ -23,15 +25,12 @@ def read_csv(pathName):
 
     return payload
 
+def amount_of_death_by_age_graph_generator(data: pd.DataFrame):
 
-def amount_of_death_by_age_graph_generator(payload):
-    mortes = list(map(lambda x: '0 - 9' if x == '< 9' else x, payload))
-    mortes = list(map(lambda x: '100 - 110' if x == '> 100' else x, mortes))
-    mortes = list(map(lambda x: convert_range_to_random(x), mortes))
     plt.xlabel("Idades")
     plt.ylabel("Total de mortes")
     plt.title("Quantidade de mortes por faixa etaria")
-    plt.hist(mortes, 30, rwidth=0.9)
+    plt.hist(data['age'], bins=30, rwidth=0.9)
     plt.show()
 
 
@@ -57,36 +56,38 @@ def graph2(payload):
     plt.show()
 
 
-def death_distribution_chart_generator_according_to_states(payload):
-    plt.rcParams['figure.figsize'] = (11, 7)
-    enum_of_states = get_unique_numbers(payload)
-    death_by_states = []
-    for state in enum_of_states:
-        number_of_deaths_in_the_state = len(list(filter(lambda x: x == state, payload)))
-        death_by_states.append(number_of_deaths_in_the_state)
+def death_distribution_chart_generator_according_to_states(data: pd.DataFrame):
+    death_by_states = data['state'].value_counts().sort_index()
 
-    plt.bar(enum_of_states, death_by_states, label="Mortes por estado", width=0.35, )
+    # Create the bar plot
+    plt.bar(death_by_states.index, death_by_states.values, label="Mortes por estado", width=0.35)
     plt.legend()
     plt.xlabel("Estados")
-    plt.title("Distribuição de mortes de por estados")
+    plt.ylabel("Número de Mortes")
+    plt.title("Distribuição de mortes por estados")
     plt.show()
 
+def treat_data(df: pd.DataFrame):
+    replace_dict = {'< 9': '0 - 9', '> 100': '100 - 110'}
+    df["age"].replace(replace_dict, inplace=True)
 
-def get_unique_numbers(numbers):
-    unique = []
-    for number in numbers:
-        if number in unique:
-            continue
-        else:
-            unique.append(number)
-    return unique
+    # Apply the convert_range_to_random function to the 'age' column
+    df["age"] = df["age"].apply(convert_range_to_random)
+    return df
 
 
 if __name__ == "__main__":
     #  Eu deixei os nomes dos gráficos que não consegui finalizar genéricos mesmo e quando
     # Conseguirmos fazer, a gente ajeita.
+    plt.rcParams['figure.figsize'] = (11, 7)
     path_of_database = 'dataBase/death_cause_brazil.csv'
-    data = read_csv(path_of_database)
+    data = pd.read_csv(path_of_database)
+    data = treat_data(data)
+
+    draw_box_plot(data)
+    draw_scatter_plot(data)
+    death_distribution_chart_generator_according_to_states(data)
+    amount_of_death_by_age_graph_generator(data)
     #  Esse abaixo estata funcionando
     # age_columns = list(map(lambda x: x['age'], data))
     # amount_of_death_by_age_graph_generator(age_columns)
