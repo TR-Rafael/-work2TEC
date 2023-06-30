@@ -4,6 +4,7 @@ import re
 import random
 import numpy as np
 
+
 def read_csv(pathName):
     payload = []
     column_names = []
@@ -21,6 +22,7 @@ def read_csv(pathName):
                 payload.append(line_content)
 
     return payload
+
 
 def amount_of_death_by_age_graph_generator(payload):
     mortes = list(map(lambda x: '0 - 9' if x == '< 9' else x, payload))
@@ -54,14 +56,30 @@ def graph2(payload):
     plt.ylabel("Idade da Morte")
     plt.show()
 
-def graph3(payload):
-    mortes = payload
-    # Daonde você tirou esses estados bicho? Preciso dessa info para saber como tratar esse código...
-    #  Isso aqui foi uma tentativa do gráfico de Barras e colunas
-    plt.bar(list(map(lambda x: x['state'], mortes)), height=list(map(lambda x: x['Estados'], mortes)), color='blue')
-    plt.xlabel('state')
-    plt.ylabel('Estados')
+
+def death_distribution_chart_generator_according_to_states(payload):
+    plt.rcParams['figure.figsize'] = (11, 7)
+    enum_of_states = get_unique_numbers(payload)
+    death_by_states = []
+    for state in enum_of_states:
+        number_of_deaths_in_the_state = len(list(filter(lambda x: x == state, payload)))
+        death_by_states.append(number_of_deaths_in_the_state)
+
+    plt.bar(enum_of_states, death_by_states, label="Mortes por estado", width=0.35, )
+    plt.legend()
+    plt.xlabel("Estados")
+    plt.title("Distribuição de mortes de por estados")
     plt.show()
+
+
+def get_unique_numbers(numbers):
+    unique = []
+    for number in numbers:
+        if number in unique:
+            continue
+        else:
+            unique.append(number)
+    return unique
 
 
 if __name__ == "__main__":
@@ -70,12 +88,14 @@ if __name__ == "__main__":
     path_of_database = 'dataBase/death_cause_brazil.csv'
     data = read_csv(path_of_database)
     #  Esse abaixo estata funcionando
-    # amount_of_death_by_age_graph_generator(list(map(lambda x: x['age'], data)))
+    # age_columns = list(map(lambda x: x['age'], data))
+    # amount_of_death_by_age_graph_generator(age_columns)
 
     # Esse a explicação sobre onde parei está dentro da função
     # graph2(data)
 
-    # Esse a explicação sobre onde parei está dentro da função
-    # graph3(data)
+    #  Esse abaixo estata funcionando
+    # state_columns = list(map(lambda x: x['state'], data))
+    # death_distribution_chart_generator_according_to_states(state_columns)
 
-    #O gráfico de linhas eu acho que sei como fazer, vou tentar amanhã.
+    # O gráfico de linhas eu acho que sei como fazer, vou tentar amanhã.
